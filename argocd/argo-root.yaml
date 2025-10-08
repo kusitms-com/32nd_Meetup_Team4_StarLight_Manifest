@@ -1,0 +1,21 @@
+# argocd/argo-root.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: starlight-root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/StartUpLight/STARLIGHT_MANIFEST.git
+    targetRevision: HEAD
+    path: argocd/envs
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
