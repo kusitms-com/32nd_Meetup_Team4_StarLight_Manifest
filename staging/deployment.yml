@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starlight-staging
+  namespace: starlight-staging
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: starlight-staging
+  template:
+    metadata:
+      labels:
+        app: starlight-staging
+    spec:
+      containers:
+        - name: starlight
+          image: leosunghojung/startuplight-be:e71b32d
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: stage

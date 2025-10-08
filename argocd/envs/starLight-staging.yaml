@@ -1,0 +1,24 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: starlight-backend-staging
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/StartUpLight/STARLIGHT_MANIFEST.git
+    targetRevision: main           # develop 브랜치로 바꿔도 됨
+    path: staging                  # <- 이 디렉터리만 동기화
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starlight-staging
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true

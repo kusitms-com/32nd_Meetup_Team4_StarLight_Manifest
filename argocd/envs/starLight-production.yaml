@@ -1,0 +1,25 @@
+## ilhaeng-backend-production.yaml
+#apiVersion: argoproj.io/v1alpha1
+#kind: Application
+#metadata:
+#  name: ilhaeng-backend-production
+#  namespace: argocd
+#spec:
+#  project: default
+#  source:
+#    repoURL: https://github.com/X-Kusitms-1/MANIFEST.git
+#    targetRevision: main           # 보통은 main 혹은 release 브랜치
+#    path: production               # <- prod 디렉터리
+#    directory:
+#      recurse: true
+#  destination:
+#    server: https://kubernetes.default.svc
+#    namespace: production
+#  syncPolicy:
+#    automated:
+#      prune: true
+#      selfHeal: true
+#    syncOptions:
+#      - CreateNamespace=true
+#      - PrunePropagationPolicy=foreground
+#      - PruneLast=true
