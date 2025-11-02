@@ -62,11 +62,11 @@ terraform.rc
 *.tfplan
 
 
-aakeys/
+keys/
 *.pem
 terraform.tfstate*
 terraform.tfvars
 env/*.tfvars
 /argocd/repo-manifest-secret.yaml
-/staging/db/secret-starlight-staging.yaml
 /aakeys/
+/staging/db/secret-starlight-staging.yaml
