@@ -70,3 +70,4 @@ env/*.tfvars
 /argocd/repo-manifest-secret.yaml
 /aakeys/
 /staging/db/secret-starlight-staging.yaml
+/production/db/secret-starlight-production.yaml

@@ -1,9 +1,10 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
-  namespace: starlight-staging
+  namespace: starlight-production
 spec:
+  serviceName: mysql
   replicas: 1
   selector:
     matchLabels:
@@ -16,7 +17,9 @@ spec:
       containers:
         - name: mysql
           image: mysql:8
-          args: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_0900_ai_ci"]
+          args:
+            - "--character-set-server=utf8mb4"
+            - "--collation-server=utf8mb4_0900_ai_ci"
           env:
             - name: MYSQL_USER
               valueFrom:
@@ -40,3 +43,25 @@ spec:
                   key: MYSQL_STARLIGHT_ROOT_PASSWORD
           ports:
             - containerPort: 3306
+          readinessProbe:
+            exec:
+              command: ["mysqladmin","ping","-h","127.0.0.1","-uroot","-p$(MYSQL_ROOT_PASSWORD)"]
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["mysqladmin","ping","-h","127.0.0.1","-uroot","-p$(MYSQL_ROOT_PASSWORD)"]
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: local-path   # k3s 기본 StorageClass
+        resources:
+          requests:
+            storage: 20Gi
