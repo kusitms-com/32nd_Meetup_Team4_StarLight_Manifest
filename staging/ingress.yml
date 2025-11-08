@@ -19,3 +19,13 @@ spec:
                 name: starlight-staging-service  # Service의 이름!
                 port:
                   number: 80
+    - host: stg.starlight-official.co.kr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: starlight-staging-service
+                port:
+                  number: 80

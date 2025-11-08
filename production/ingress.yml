@@ -19,3 +19,13 @@ spec:
                 name: starlight-production-service  # Service의 이름!
                 port:
                   number: 80
+    - host: prd.starlight-official.co.kr
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: starlight-production-service
+                port:
+                  number: 80
