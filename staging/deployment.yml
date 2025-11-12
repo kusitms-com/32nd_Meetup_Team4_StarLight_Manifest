@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: starlight
-          image: leosunghojung/startuplight-be:b38d455
+          image: leosunghojung/startuplight-be:b7d6b8b
           ports:
             - containerPort: 8080
           env:
