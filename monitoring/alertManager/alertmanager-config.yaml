@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: alertmanager-prometheus-kube-prometheus-alertmanager
+  namespace: monitoring
+type: Opaque
+stringData:
+  alertmanager.yaml: |
+    global:
+      resolve_timeout: 5m
+
+    route:
+      group_by: ['alertname', 'namespace', 'severity']
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'discord-critical'
+      routes:
+        - match:
+            severity: critical
+          receiver: 'discord-critical'
+          continue: true
+        - match:
+            severity: warning
+          receiver: 'discord-warning'
+
+    receivers:
+    - name: 'discord-critical'
+      slack_configs:
+      - api_url: 'https://discord.com/api/webhooks/--/gfg7SX8DcXHywSiTnDFQuuoZy9sXCJtw3NNgpkYL1XBEWd7Az0MuoP9S3OFjwz4hr2qU/slack'
+        send_resolved: true
+        channel: '#general'
+        # 제목에 이미 CRITICAL이 있으니 본문엔 없어도 됨
+        title: '🚨 [{{ .Status | toUpper }}] {{ .GroupLabels.alertname }} (CRITICAL)'
+        text: |
+          ### ⚡️네임스페이스: {{ .GroupLabels.namespace }}
+          {{ range .Alerts }}
+          ━━━━━━━━━━━━━━━━━━━━━━
+          ### 📝 요약 (Summary):
+          {{ .Annotations.summary }}
+    
+          ### 🔎 상세 내용 (Description):
+          >>> {{ .Annotations.description }}
+    
+          **발생 위치 (Target):**
+          `{{ .Labels.instance }}` {{ if .Labels.pod }}(Pod: `{{ .Labels.pod }}`){{ end }}
+    
+          **발생 시각:**
+          {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+          ━━━━━━━━━━━━━━━━━━━━━━
+
+    - name: 'discord-warning'
+      slack_configs:
+      - api_url: 'https://discord.com/api/webhooks/--/gfg7SX8DcXHywSiTnDFQuuoZy9sXCJtw3NNgpkYL1XBEWd7Az0MuoP9S3OFjwz4hr2qU/slack'
+        send_resolved: true
+        # 제목에 이미 WARNING이 있으니 본문엔 없어도 됨
+        title: '⚠️ [{{ .Status | toUpper }}] {{ .GroupLabels.alertname }} (WARNING)'
+        text: |
+          ### 📍 네임스페이스: {{ .GroupLabels.namespace }}
+    
+          {{ range .Alerts }}
+          ━━━━━━━━━━━━━━━━━━━━━━
+          ### 📝 요약 (Summary):
+          {{ .Annotations.summary }}
+    
+          ### 🔎 상세 내용 (Description):
+          >>> {{ .Annotations.description }}
+    
+          **발생 위치 (Target):**
+          `{{ .Labels.instance }}` {{ if .Labels.pod }}(Pod: `{{ .Labels.pod }}`){{ end }}
+
+          **발생 시각:**
+          {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+          ━━━━━━━━━━━━━━━━━━━━━━

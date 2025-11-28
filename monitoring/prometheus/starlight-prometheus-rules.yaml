@@ -1,0 +1,306 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: starlight-alerts
+  namespace: monitoring
+  labels:
+    release: prometheus
+    prometheus: kube-prometheus
+    app: kube-prometheus-stack
+spec:
+  groups:
+    # ==============================================
+    # Phase 1: 비즈니스 크리티컬 알람 (최우선)
+    # ==============================================
+    - name: starlight_service_critical
+      interval: 30s
+      rules:
+        # 1. Starlight Production 서비스 전체 다운
+        - alert: StarlightProductionDown
+          expr: |
+            kube_deployment_status_replicas_available{namespace="starlight-production", deployment=~"starlight-production.*"} == 0
+          for: 1m
+          labels:
+            severity: critical
+            service: starlight
+            env: production
+          annotations:
+            summary: "🚨 Starlight Production 서비스 전체 다운"
+            description: "모든 Starlight Production 파드가 다운되었습니다. 즉시 확인 필요!"
+
+        # 2. Starlight Staging 서비스 다운 (덜 급함)
+        - alert: StarlightStagingDown
+          expr: |
+            kube_deployment_status_replicas_available{namespace="starlight-staging", deployment=~"starlight-staging.*"} == 0
+          for: 3m
+          labels:
+            severity: warning
+            service: starlight
+            env: staging
+          annotations:
+            summary: "⚠️ Starlight Staging 서비스 다운"
+            description: "Staging 환경이 다운되었습니다. 배포 문제일 수 있습니다."
+
+        # 3. MySQL 다운 (데이터 레이어)
+        - alert: MySQLDown
+          expr: |
+            kube_pod_status_phase{namespace=~"starlight-.*|ncareer", pod=~"mysql-.*", phase!="Running"} > 0
+          for: 2m
+          labels:
+            severity: critical
+            component: database
+          annotations:
+            summary: "💥 MySQL 다운: {{ $labels.namespace }}"
+            description: "{{ $labels.namespace }}의 MySQL 파드가 Running 상태가 아닙니다."
+
+        # 4. Redis 다운 (캐시/세션 레이어)
+        - alert: RedisDown
+          expr: |
+            kube_pod_status_phase{namespace=~"starlight-.*|ncareer", pod=~"redis-.*", phase!="Running"} > 0
+          for: 2m
+          labels:
+            severity: critical
+            component: cache
+          annotations:
+            summary: "💥 Redis 다운: {{ $labels.namespace }}"
+            description: "{{ $labels.namespace }}의 Redis 파드가 다운되었습니다. 세션 손실 가능."
+
+    # ==============================================
+    # Phase 2: 파드 안정성 알람
+    # ==============================================
+    - name: starlight_pod_stability
+      interval: 1m
+      rules:
+        # 5. 파드 반복 재시작 (CrashLoop 징후)
+        - alert: PodRestarting
+          expr: |
+            rate(kube_pod_container_status_restarts_total{namespace=~"starlight-.*|ncareer|argocd"}[15m]) * 900 > 2
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "⚠️ 파드 재시작 감지: {{ $labels.namespace }}/{{ $labels.pod }}"
+            description: "15분간 {{ $value | humanizePercentage }}회 재시작. 메모리 누수/OOM 가능성 확인 필요."
+
+        # 6. 파드 Critical 재시작 (심각)
+        - alert: PodCrashLoopingCritical
+          expr: |
+            rate(kube_pod_container_status_restarts_total{namespace=~"starlight-.*|ncareer"}[10m]) * 600 > 5
+          for: 3m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🚨 파드 지속적 CrashLoop: {{ $labels.namespace }}/{{ $labels.pod }}"
+            description: "10분간 5회 이상 재시작. 즉시 로그 확인 필요!"
+
+        # 7. 파드 Pending 상태 지속 (리소스 부족)
+        - alert: PodStuckPending
+          expr: |
+            kube_pod_status_phase{namespace=~"starlight-.*|ncareer", phase="Pending"} > 0
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "⚠️ 파드 Pending 상태: {{ $labels.namespace }}/{{ $labels.pod }}"
+            description: "10분 이상 Pending. 노드 리소스 부족 또는 PVC 마운트 실패 가능성."
+
+        # 8. OOMKilled 즉시 알람
+        - alert: PodOOMKilled
+          expr: |
+            kube_pod_container_status_terminated_reason{reason="OOMKilled", namespace=~"starlight-.*|ncareer"} > 0
+          labels:
+            severity: critical
+          annotations:
+            summary: "💥 파드 OOM Kill: {{ $labels.namespace }}/{{ $labels.pod }}"
+            description: "메모리 부족으로 컨테이너가 강제 종료. Memory Limit 조정 필요."
+
+    # ==============================================
+    # Phase 3: 노드 리소스 알람
+    # ==============================================
+    - name: node_resource_alerts
+      interval: 1m
+      rules:
+        # 9. 노드 CPU 높음 (85% 이상 10분)
+        - alert: NodeHighCPU
+          expr: |
+            100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "⚠️ 노드 CPU 높음: {{ $labels.instance }}"
+            description: "CPU 사용률 {{ $value | humanize }}%. 스케일 아웃 고려 필요."
+
+        # 10. 노드 CPU Critical (95% 이상)
+        - alert: NodeCriticalCPU
+          expr: |
+            100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🚨 노드 CPU 포화: {{ $labels.instance }}"
+            description: "CPU 사용률 {{ $value | humanize }}%. 즉시 스케일 아웃 필요!"
+
+        # 11. 노드 메모리 높음 (85% 이상)
+        - alert: NodeHighMemory
+          expr: |
+            (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "⚠️ 노드 메모리 높음: {{ $labels.instance }}"
+            description: "메모리 사용률 {{ $value | humanize }}%. OOM 위험."
+
+        # 12. 노드 메모리 Critical (95% 이상)
+        - alert: NodeCriticalMemory
+          expr: |
+            (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 95
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🚨 노드 메모리 부족: {{ $labels.instance }}"
+            description: "메모리 사용률 {{ $value | humanize }}%. 파드 OOM 임박!"
+
+        # 13. 디스크 용량 부족 (80% 이상)
+        - alert: NodeDiskSpaceWarning
+          expr: |
+            (1 - (node_filesystem_avail_bytes{fstype!="tmpfs",mountpoint="/"} / node_filesystem_size_bytes)) * 100 > 80
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: "⚠️ 노드 디스크 부족: {{ $labels.instance }}"
+            description: "디스크 사용률 {{ $value | humanize }}%. 로그 정리 필요."
+
+        # 14. 디스크 용량 Critical (90% 이상)
+        - alert: NodeDiskSpaceCritical
+          expr: |
+            (1 - (node_filesystem_avail_bytes{fstype!="tmpfs",mountpoint="/"} / node_filesystem_size_bytes)) * 100 > 90
+          for: 10m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🚨 노드 디스크 거의 가득 참: {{ $labels.instance }}"
+            description: "디스크 사용률 {{ $value | humanize }}%. 즉시 용량 확보 필요!"
+
+    # ==============================================
+    # Phase 4: 애플리케이션 레벨 알람 (저트래픽 최적화)
+    # ==============================================
+    - name: starlight_app_performance
+      interval: 1m
+      rules:
+        # 15. HTTP 5xx 에러 발생 (저트래픽이라 절대값으로)
+        - alert: StarlightHTTP5xxErrors
+          expr: |
+            sum(rate(nginx_ingress_controller_requests{namespace="starlight-production", status=~"5.."}[5m])) > 0.1
+          for: 5m
+          labels:
+            severity: warning
+            service: starlight
+          annotations:
+            summary: "⚠️ Starlight 5xx 에러 발생"
+            description: "5분간 평균 {{ $value | humanize }} req/s의 5xx 에러 발생 중"
+
+        # 16. HTTP 5xx 에러율 (트래픽 많아지면 활성화)
+        - alert: StarlightHighErrorRate
+          expr: |
+            (
+              sum(rate(nginx_ingress_controller_requests{namespace="starlight-production", status=~"5.."}[5m]))
+              / 
+              sum(rate(nginx_ingress_controller_requests{namespace="starlight-production"}[5m]))
+            ) * 100 > 5
+          for: 5m
+          labels:
+            severity: critical
+            service: starlight
+          annotations:
+            summary: "🚨 Starlight 에러율 {{ $value | humanize }}%"
+            description: "5분간 에러율이 5%를 초과했습니다. 심각한 장애 가능성!"
+
+        # 17. API 응답 느림 (P95 기준)
+        - alert: StarlightSlowResponse
+          expr: |
+            histogram_quantile(0.95, 
+              sum(rate(nginx_ingress_controller_request_duration_seconds_bucket{namespace="starlight-production"}[5m])) by (le)
+            ) > 2
+          for: 10m
+          labels:
+            severity: warning
+            service: starlight
+          annotations:
+            summary: "⚠️ Starlight API 응답 느림 (P95: {{ $value }}초)"
+            description: "95%tile 응답시간이 2초를 초과했습니다. 성능 최적화 필요."
+
+        # 18. 트래픽 급감 (장애 징후)
+        - alert: StarlightTrafficDrop
+          expr: |
+            sum(rate(nginx_ingress_controller_requests{namespace="starlight-production"}[5m])) 
+            < sum(rate(nginx_ingress_controller_requests{namespace="starlight-production"}[5m] offset 1h)) * 0.3
+          for: 10m
+          labels:
+            severity: warning
+            service: starlight
+          annotations:
+            summary: "⚠️ Starlight 트래픽 급감"
+            description: "평소 대비 70% 이상 트래픽 감소. 서비스 접근 불가 가능성."
+
+    # ==============================================
+    # Phase 5: ArgoCD & GitOps 알람
+    # ==============================================
+    - name: argocd_deployment_alerts
+      interval: 2m
+      rules:
+        # 19. ArgoCD App OutOfSync
+        - alert: ArgoCDOutOfSync
+          expr: |
+            argocd_app_info{sync_status!="Synced"} > 0
+          for: 15m
+          labels:
+            severity: warning
+            component: argocd
+          annotations:
+            summary: "⚠️ ArgoCD 동기화 실패: {{ $labels.name }}"
+            description: "{{ $labels.name }} 앱이 15분 이상 OutOfSync 상태입니다."
+
+        # 20. ArgoCD App Health Degraded
+        - alert: ArgoCDAppDegraded
+          expr: |
+            argocd_app_info{health_status!~"Healthy|Progressing"} > 0
+          for: 10m
+          labels:
+            severity: critical
+            component: argocd
+          annotations:
+            summary: "🚨 ArgoCD 앱 상태 불량: {{ $labels.name }}"
+            description: "{{ $labels.name }} 헬스 상태: {{ $labels.health_status }}"
+
+    # ==============================================
+    # Phase 6: 모니터링 스택 자체 헬스체크
+    # ==============================================
+    - name: monitoring_stack_health
+      interval: 1m
+      rules:
+        # 21. Prometheus 타겟 다운
+        - alert: PrometheusTargetDown
+          expr: |
+            up{namespace="monitoring"} == 0
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "⚠️ Prometheus 타겟 다운: {{ $labels.job }}"
+            description: "{{ $labels.instance }} 메트릭 수집 실패"
+
+        # 22. AlertManager 다운
+        - alert: AlertManagerDown
+          expr: |
+            up{job="prometheus-kube-prometheus-alertmanager"} == 0
+          for: 3m
+          labels:
+            severity: critical
+          annotations:
+            summary: "🚨 AlertManager 다운"
+            description: "알람 전송 불가 상태! 즉시 복구 필요."
