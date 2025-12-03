@@ -17,17 +17,47 @@ stringData:
       receiver: 'discord-critical'
       routes:
         - match:
+            alertname: Watchdog
+          receiver: 'discord-watchdog'
+          repeat_interval: 24h   # 24시간에 한 번만 툭 쏘게 (원하면 더 길게도 가능)
+    
+        - match:
             severity: critical
           receiver: 'discord-critical'
           continue: true
+    
         - match:
             severity: warning
           receiver: 'discord-warning'
 
     receivers:
+    - name: 'discord-watchdog'
+      slack_configs:
+      - api_url: 'https://discord.com/api/webhooks/--/--/slack'
+        send_resolved: false
+        channel: '#general'
+        color: 'good'
+        
+        title: '🤖 모니터링 시스템 정상 동작 중 (Watchdog)'
+        text: |
+          안녕하세요, StarLight 모니터링 비서 **Watchdog** 입니다 🐶
+      
+          지금 시각 기준으로 
+          **Prometheus → Alertmanager → Discord** 알림 파이프라인이 **정상 동작** 중입니다 
+      
+          {{ range .Alerts }}
+          - 알람 이름: `{{ .Labels.alertname }}`
+          - 상태: `{{ .Status }}`
+          - 처음 발생 시각: {{ .StartsAt.Format "2006-01-02 15:04:05" }}
+          {{ end }}
+      
+          이 메시지가 가끔씩 보이면:  
+          👉 "*아, 모니터링 시스템은 잘 살아있구나*" 라고 생각하시면 됩니다 😎
+          만약 **이 메시지가 한동안 안 온다**면, 그 때가 진짜 문제예요... 🧯
+    
     - name: 'discord-critical'
       slack_configs:
-      - api_url: 'https://discord.com/api/webhooks/--/gfg7SX8DcXHywSiTnDFQuuoZy9sXCJtw3NNgpkYL1XBEWd7Az0MuoP9S3OFjwz4hr2qU/slack'
+      - api_url: 'https://discord.com/api/webhooks/--/--/slack'
         send_resolved: true
         channel: '#general'
         # 제목에 이미 CRITICAL이 있으니 본문엔 없어도 됨
@@ -52,7 +82,7 @@ stringData:
 
     - name: 'discord-warning'
       slack_configs:
-      - api_url: 'https://discord.com/api/webhooks/--/gfg7SX8DcXHywSiTnDFQuuoZy9sXCJtw3NNgpkYL1XBEWd7Az0MuoP9S3OFjwz4hr2qU/slack'
+      - api_url: 'https://discord.com/api/webhooks/--/--/slack'
         send_resolved: true
         # 제목에 이미 WARNING이 있으니 본문엔 없어도 됨
         title: '⚠️ [{{ .Status | toUpper }}] {{ .GroupLabels.alertname }} (WARNING)'
