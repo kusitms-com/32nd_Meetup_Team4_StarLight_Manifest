@@ -1,0 +1,223 @@
+global:
+  scrapeInterval: 120s      
+  evaluationInterval: 120s
+
+prometheusOperator:
+  nodeSelector:
+    kubernetes.io/hostname: starlight-monitoring-cs
+  tolerations:
+    - key: "monitoring"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  resources:
+    requests:
+      memory: 128Mi         
+      cpu: 15m              
+    limits:
+      memory: 256Mi          
+      cpu: 40m
+  admissionWebhooks:
+    enabled: false
+  tls:
+    enabled: false          
+
+prometheus:
+  enabled: true
+  prometheusSpec:
+    nodeSelector:
+      kubernetes.io/hostname: ilhaeng-web-server
+    tolerations:
+      - key: "monitoring"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+    resources:
+      requests:
+        memory: 512Mi     
+        cpu: 200m         
+      limits:
+        memory: 1Gi       
+        cpu: 500m
+
+    retention: 12h          
+    retentionSize: "500MB"  
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi   
+
+    walCompression: true
+    enforcedSampleLimit: 5000   
+    enforcedTargetLimit: 30     
+
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+    externalLabels:
+      cluster: starlight-k3s
+
+grafana:
+  enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: starlight-monitoring-sh
+  tolerations:
+    - key: "monitoring"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+
+  adminPassword: "starlight7897!"
+
+  service:
+    type: NodePort
+    nodePort: 30300
+
+  resources:
+    requests:
+      memory: 120Mi         
+      cpu: 40m              
+    limits:
+      memory: 240Mi        
+      cpu: 150m
+
+  persistence:
+    enabled: true
+    storageClassName: local-path
+    size: 2Gi              
+
+  initChownData:
+    enabled: false          
+
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      access: proxy
+      url: http://loki:3100
+      isDefault: false
+      
+  sidecar:
+    dashboards:
+      enabled: false       
+    datasources:
+      enabled: false       
+
+  plugins: []
+
+  downloadDashboards:
+    enabled: false
+
+  testFramework:
+    enabled: false
+
+  grafana.ini:
+    server:
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/"
+    analytics:
+      check_for_updates: false
+      reporting_enabled: false
+    log:
+      level: warn
+
+alertmanager:
+  enabled: true
+  alertmanagerSpec:
+    nodeSelector:
+      kubernetes.io/hostname: starlight-monitoring-sh
+    tolerations:
+      - key: "monitoring"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+
+    resources:
+      requests:
+        memory: 32Mi
+        cpu: 20m            
+      limits:
+        memory: 64Mi        
+        cpu: 80m
+
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: local-path
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi    
+              
+nodeExporter:
+  enabled: true
+  tolerations:
+    - operator: "Exists"
+  resources:
+    requests:
+      memory: 12Mi         
+      cpu: 8m              
+    limits:
+      memory: 24Mi         
+      cpu: 25m
+
+kubeStateMetrics:
+  enabled: true
+  nodeSelector:
+    kubernetes.io/hostname: starlight-monitoring-cs
+  tolerations:
+    - key: "monitoring"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  resources:
+    requests:
+      memory: 24Mi         
+      cpu: 12m             
+    limits:
+      memory: 48Mi         
+      cpu: 35m
+
+defaultRules:
+  create: true
+  rules:
+    general: true
+    k8s: true
+    node: true
+    alertmanager: false
+    etcd: false
+    configReloaders: false
+    kubeApiserverAvailability: false
+    kubeApiserverSlos: false
+    kubelet: false
+    kubeProxy: false
+    kubePrometheusGeneral: false
+    kubePrometheusNodeRecording: false
+    kubernetesApps: false
+    kubernetesResources: false
+    kubernetesStorage: false
+    kubernetesSystem: false
+    kubeScheduler: false
+    kubeStateMetrics: false
+    network: false
+    nodeExporterAlerting: false
+    nodeExporterRecording: false
+    prometheus: false
+    prometheusOperator: false
+
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+coreDns:
+  enabled: false
+kubeDns:
+  enabled: false
