@@ -1,0 +1,763 @@
+{
+  "root_group": {
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "name": "01_Login",
+        "path": "::01_Login",
+        "id": "8633b286339711fbe75b5eb28ace0628",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::01_Login::login: status 200",
+              "id": "59b86bb92217ced9160bf66ff718dd72",
+              "passes": 16,
+              "fails": 0,
+              "name": "login: status 200"
+            },
+            {
+              "name": "login: contains tokens",
+              "path": "::01_Login::login: contains tokens",
+              "id": "f59657b53bd46babae224052c1c77891",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "login: < 800ms",
+              "path": "::01_Login::login: < 800ms",
+              "id": "da1441f2eb3471476764ece04f2c86f6",
+              "passes": 16,
+              "fails": 0
+            }
+          ]
+      },
+      {
+        "name": "02_List_Business_Plans",
+        "path": "::02_List_Business_Plans",
+        "id": "38cae922a1ea30222235c4e21170b787",
+        "groups": [],
+        "checks": [
+            {
+              "fails": 0,
+              "name": "list: status 200",
+              "path": "::02_List_Business_Plans::list: status 200",
+              "id": "9f832d0662e378db256a5b2457d82030",
+              "passes": 16
+            },
+            {
+              "id": "700b58fc9f4947c91e7dbe71b1edecde",
+              "passes": 16,
+              "fails": 0,
+              "name": "list: returns data",
+              "path": "::02_List_Business_Plans::list: returns data"
+            },
+            {
+              "id": "28af861843b6ab77dcafebf923de3109",
+              "passes": 16,
+              "fails": 0,
+              "name": "list: < 1.5s",
+              "path": "::02_List_Business_Plans::list: < 1.5s"
+            }
+          ]
+      },
+      {
+        "name": "03_Create_Business_Plan",
+        "path": "::03_Create_Business_Plan",
+        "id": "b4b36e00e9072da1b967b40a1c74066e",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::03_Create_Business_Plan::create: status 200/201",
+              "id": "639a956ec2486b10c7ae49fc210c58a4",
+              "passes": 16,
+              "fails": 0,
+              "name": "create: status 200/201"
+            },
+            {
+              "path": "::03_Create_Business_Plan::create: has id",
+              "id": "33dea462e859bc8c41e2be5fc604be99",
+              "passes": 16,
+              "fails": 0,
+              "name": "create: has id"
+            },
+            {
+              "id": "645fffbfd980a86210b82ef8563e6631",
+              "passes": 16,
+              "fails": 0,
+              "name": "create: < 1s",
+              "path": "::03_Create_Business_Plan::create: < 1s"
+            }
+          ]
+      },
+      {
+        "groups": [],
+        "checks": [
+            {
+              "name": "title get: status 200",
+              "path": "::04_Title_And_Subsections::title get: status 200",
+              "id": "ab26ba2dd69f45ea98227e5b0f281217",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "path": "::04_Title_And_Subsections::title get: success result",
+              "id": "768ff9b02b063b0150140150f663c3c9",
+              "passes": 16,
+              "fails": 0,
+              "name": "title get: success result"
+            },
+            {
+              "path": "::04_Title_And_Subsections::title save: status 200",
+              "id": "e517df41c7f3649bb29b191cb15369f4",
+              "passes": 16,
+              "fails": 0,
+              "name": "title save: status 200"
+            },
+            {
+              "fails": 0,
+              "name": "title save: success result",
+              "path": "::04_Title_And_Subsections::title save: success result",
+              "id": "a3b0ce28e894426dbed78d814acda74f",
+              "passes": 16
+            },
+            {
+              "path": "::04_Title_And_Subsections::OVERVIEW_BASIC save: status 200/201",
+              "id": "9576a3fee307f65414bb0c70f68da180",
+              "passes": 16,
+              "fails": 0,
+              "name": "OVERVIEW_BASIC save: status 200/201"
+            },
+            {
+              "passes": 16,
+              "fails": 0,
+              "name": "OVERVIEW_BASIC save: success",
+              "path": "::04_Title_And_Subsections::OVERVIEW_BASIC save: success",
+              "id": "9f01640570f0b1ce80b3481c183a2baf"
+            },
+            {
+              "name": "OVERVIEW_BASIC get: status 200",
+              "path": "::04_Title_And_Subsections::OVERVIEW_BASIC get: status 200",
+              "id": "d1e0db975ebc294ee0fd4e4993588d78",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "OVERVIEW_BASIC get: success",
+              "path": "::04_Title_And_Subsections::OVERVIEW_BASIC get: success",
+              "id": "d1298c6575304cdeae06ea29eb9e0d57",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "PROBLEM_BACKGROUND save: status 200/201",
+              "path": "::04_Title_And_Subsections::PROBLEM_BACKGROUND save: status 200/201",
+              "id": "ad4963f5ba750b5945c90b5c1f988fb8",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "PROBLEM_BACKGROUND save: success",
+              "path": "::04_Title_And_Subsections::PROBLEM_BACKGROUND save: success",
+              "id": "0788133b621a2e4bcbac64a9a427ba77",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "path": "::04_Title_And_Subsections::PROBLEM_BACKGROUND get: status 200",
+              "id": "545269cc53a83d32358f4acb161b3eec",
+              "passes": 16,
+              "fails": 0,
+              "name": "PROBLEM_BACKGROUND get: status 200"
+            },
+            {
+              "passes": 16,
+              "fails": 0,
+              "name": "PROBLEM_BACKGROUND get: success",
+              "path": "::04_Title_And_Subsections::PROBLEM_BACKGROUND get: success",
+              "id": "d29105fc8c3062966539f3ca4cbc5234"
+            },
+            {
+              "name": "PROBLEM_PURPOSE save: status 200/201",
+              "path": "::04_Title_And_Subsections::PROBLEM_PURPOSE save: status 200/201",
+              "id": "f43e0206e560bc58fd1ec993f494b6ed",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "PROBLEM_PURPOSE save: success",
+              "path": "::04_Title_And_Subsections::PROBLEM_PURPOSE save: success",
+              "id": "943041b3f72ac72c97d02338d060e0e1",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "PROBLEM_PURPOSE get: status 200",
+              "path": "::04_Title_And_Subsections::PROBLEM_PURPOSE get: status 200",
+              "id": "f1d4275f2e84293b4aae60de2ff256e5",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "id": "725bd3ad711471c6437bf1c4f55b4270",
+              "passes": 16,
+              "fails": 0,
+              "name": "PROBLEM_PURPOSE get: success",
+              "path": "::04_Title_And_Subsections::PROBLEM_PURPOSE get: success"
+            },
+            {
+              "id": "346080110da03a6484934870ba432f89",
+              "passes": 16,
+              "fails": 0,
+              "name": "PROBLEM_MARKET save: status 200/201",
+              "path": "::04_Title_And_Subsections::PROBLEM_MARKET save: status 200/201"
+            },
+            {
+              "path": "::04_Title_And_Subsections::PROBLEM_MARKET save: success",
+              "id": "99ad7fe570ef586f32a800f3925948c4",
+              "passes": 16,
+              "fails": 0,
+              "name": "PROBLEM_MARKET save: success"
+            },
+            {
+              "name": "PROBLEM_MARKET get: status 200",
+              "path": "::04_Title_And_Subsections::PROBLEM_MARKET get: status 200",
+              "id": "ad9f67ac6a1189167c1e06437bf55113",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "PROBLEM_MARKET get: success",
+              "path": "::04_Title_And_Subsections::PROBLEM_MARKET get: success",
+              "id": "d39159c4ad8d157b3f9738bb98ced9b5",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "FEASIBILITY_STRATEGY save: status 200/201",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_STRATEGY save: status 200/201",
+              "id": "64bb846aea1339d14354e08455021aa9",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "id": "40aa02def88f21016310e0499d46ca29",
+              "passes": 16,
+              "fails": 0,
+              "name": "FEASIBILITY_STRATEGY save: success",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_STRATEGY save: success"
+            },
+            {
+              "name": "FEASIBILITY_STRATEGY get: status 200",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_STRATEGY get: status 200",
+              "id": "30e48c6eca82756a8bff330b3708d899",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "FEASIBILITY_STRATEGY get: success",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_STRATEGY get: success",
+              "id": "096c322f04ff575a8a23d97f91fbf696",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "FEASIBILITY_MARKET save: status 200/201",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_MARKET save: status 200/201",
+              "id": "dba46ee13828f617f0b767e6e9e0c259",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "FEASIBILITY_MARKET save: success",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_MARKET save: success",
+              "id": "2a81e521cfae3aac339eb7725018faa9",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "id": "3f70aa71306a2de9c21f7e6a8e223146",
+              "passes": 16,
+              "fails": 0,
+              "name": "FEASIBILITY_MARKET get: status 200",
+              "path": "::04_Title_And_Subsections::FEASIBILITY_MARKET get: status 200"
+            },
+            {
+              "path": "::04_Title_And_Subsections::FEASIBILITY_MARKET get: success",
+              "id": "83e9ad0e6e41913ced03244b62d4347a",
+              "passes": 16,
+              "fails": 0,
+              "name": "FEASIBILITY_MARKET get: success"
+            },
+            {
+              "name": "GROWTH_MODEL save: status 200/201",
+              "path": "::04_Title_And_Subsections::GROWTH_MODEL save: status 200/201",
+              "id": "218d5c496dd8d244f68a7e868f568808",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "GROWTH_MODEL save: success",
+              "path": "::04_Title_And_Subsections::GROWTH_MODEL save: success",
+              "id": "1a6ba43615250dd333cc82e9e884bb87",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "GROWTH_MODEL get: status 200",
+              "path": "::04_Title_And_Subsections::GROWTH_MODEL get: status 200",
+              "id": "3bf8956d311165e289eeb25130325c84",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "GROWTH_MODEL get: success",
+              "path": "::04_Title_And_Subsections::GROWTH_MODEL get: success",
+              "id": "f83c5f51cda8f86e44eb811549ec4ba4",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "fails": 0,
+              "name": "GROWTH_FUNDING save: status 200/201",
+              "path": "::04_Title_And_Subsections::GROWTH_FUNDING save: status 200/201",
+              "id": "e0845aefab50fe87bcf0feadf4b9ed6e",
+              "passes": 16
+            },
+            {
+              "name": "GROWTH_FUNDING save: success",
+              "path": "::04_Title_And_Subsections::GROWTH_FUNDING save: success",
+              "id": "59de6134db9e1b4b6f86c8ba02d4d8c3",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "GROWTH_FUNDING get: status 200",
+              "path": "::04_Title_And_Subsections::GROWTH_FUNDING get: status 200",
+              "id": "d5a2a35419a2305fd68e4ad729cfde7d",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "fails": 0,
+              "name": "GROWTH_FUNDING get: success",
+              "path": "::04_Title_And_Subsections::GROWTH_FUNDING get: success",
+              "id": "7afaf28f4df7ce37b7786371fa0a62c1",
+              "passes": 16
+            },
+            {
+              "name": "GROWTH_ENTRY save: status 200/201",
+              "path": "::04_Title_And_Subsections::GROWTH_ENTRY save: status 200/201",
+              "id": "1fa7875d6f71cc722193569a7ed9c24d",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "GROWTH_ENTRY save: success",
+              "path": "::04_Title_And_Subsections::GROWTH_ENTRY save: success",
+              "id": "e2fd75f8e0d2c185b8e61a38fae61812",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "id": "4beb1464ab0324a781b470cc89a41a38",
+              "passes": 16,
+              "fails": 0,
+              "name": "GROWTH_ENTRY get: status 200",
+              "path": "::04_Title_And_Subsections::GROWTH_ENTRY get: status 200"
+            },
+            {
+              "fails": 0,
+              "name": "GROWTH_ENTRY get: success",
+              "path": "::04_Title_And_Subsections::GROWTH_ENTRY get: success",
+              "id": "371153138605154ee682cd8b91842ba1",
+              "passes": 16
+            },
+            {
+              "name": "TEAM_FOUNDER save: status 200/201",
+              "path": "::04_Title_And_Subsections::TEAM_FOUNDER save: status 200/201",
+              "id": "6402698c2a956b0fcec3b4644efb8586",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "fails": 0,
+              "name": "TEAM_FOUNDER save: success",
+              "path": "::04_Title_And_Subsections::TEAM_FOUNDER save: success",
+              "id": "439255d609ea2faf8eb6631e0d52627a",
+              "passes": 16
+            },
+            {
+              "path": "::04_Title_And_Subsections::TEAM_FOUNDER get: status 200",
+              "id": "f07ea50eeb7e6db66f685abd21d703b3",
+              "passes": 16,
+              "fails": 0,
+              "name": "TEAM_FOUNDER get: status 200"
+            },
+            {
+              "id": "8ee741f3e2402b86bbc56f9ff46cef30",
+              "passes": 16,
+              "fails": 0,
+              "name": "TEAM_FOUNDER get: success",
+              "path": "::04_Title_And_Subsections::TEAM_FOUNDER get: success"
+            },
+            {
+              "name": "TEAM_MEMBERS save: status 200/201",
+              "path": "::04_Title_And_Subsections::TEAM_MEMBERS save: status 200/201",
+              "id": "4846eb98b2d629d237bcac03e4b1aba9",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "name": "TEAM_MEMBERS save: success",
+              "path": "::04_Title_And_Subsections::TEAM_MEMBERS save: success",
+              "id": "7d7aa6f958d8f19563f9e3dc08786d60",
+              "passes": 16,
+              "fails": 0
+            },
+            {
+              "id": "b7c438e2cc2ac45c7dd22932ae21a124",
+              "passes": 16,
+              "fails": 0,
+              "name": "TEAM_MEMBERS get: status 200",
+              "path": "::04_Title_And_Subsections::TEAM_MEMBERS get: status 200"
+            },
+            {
+              "name": "TEAM_MEMBERS get: success",
+              "path": "::04_Title_And_Subsections::TEAM_MEMBERS get: success",
+              "id": "f0c79edb78ad3098ee8c780ff7c716be",
+              "passes": 16,
+              "fails": 0
+            }
+          ],
+        "name": "04_Title_And_Subsections",
+        "path": "::04_Title_And_Subsections",
+        "id": "922e13a36f9232fc22c7cbd468435e3a"
+      },
+      {
+        "path": "::06_Expert_Connect",
+        "id": "3c2c0919c23443b89c386292789e8129",
+        "groups": [],
+        "checks": [
+            {
+              "path": "::06_Expert_Connect::experts: status 200",
+              "id": "927f712b9c89a7c7d0dfcbbd9c10e0d4",
+              "passes": 16,
+              "fails": 0,
+              "name": "experts: status 200"
+            },
+            {
+              "path": "::06_Expert_Connect::applied experts: status 200 or 404",
+              "id": "6872fa95ee14351d5156a3c796d98e76",
+              "passes": 16,
+              "fails": 0,
+              "name": "applied experts: status 200 or 404"
+            },
+            {
+              "passes": 16,
+              "fails": 0,
+              "name": "expert request: status 200",
+              "path": "::06_Expert_Connect::expert request: status 200",
+              "id": "6a15188e21607ffe77e1c206d919f0bd"
+            }
+          ],
+        "name": "06_Expert_Connect"
+      }
+    ],
+    "checks": [],
+    "name": ""
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdOutTTY": true,
+    "isStdErrTTY": true,
+    "testRunDurationMs": 124035.461
+  },
+  "metrics": {
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0.023049999999999977,
+        "avg": 0.017779166666666603,
+        "min": 0.002,
+        "med": 0.009,
+        "max": 1.245,
+        "p(90)": 0.017
+      }
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "value": 1,
+        "min": 1,
+        "max": 2
+      }
+    },
+    "list_success_rate": {
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 16,
+        "fails": 0
+      },
+      "type": "rate"
+    },
+    "expert_connect_success_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 16,
+        "fails": 0,
+        "rate": 1
+      }
+    },
+    "login_success_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "fails": 0,
+        "rate": 1,
+        "passes": 16
+      },
+      "thresholds": {
+        "rate>0.95": {
+          "ok": true
+        }
+      }
+    },
+    "create_plan_success_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 16,
+        "fails": 0
+      }
+    },
+    "http_req_duration": {
+      "contains": "time",
+      "values": {
+        "avg": 27.772862499999995,
+        "min": 8.552,
+        "med": 18.332,
+        "max": 157.399,
+        "p(90)": 52.0428,
+        "p(95)": 63.48179999999999
+      },
+      "thresholds": {
+        "p(95)<5000": {
+          "ok": true
+        }
+      },
+      "type": "trend"
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0.004758333333333334,
+        "min": 0,
+        "med": 0,
+        "max": 0.585
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 27.373374999999996,
+        "min": 8.431,
+        "med": 18.0245,
+        "max": 157.057,
+        "p(90)": 51.4585,
+        "p(95)": 62.605599999999995
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "max": 2,
+        "value": 2,
+        "min": 2
+      }
+    },
+    "data_received": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 586389,
+        "rate": 4727.5915715748415
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0,
+        "passes": 0,
+        "fails": 480
+      },
+      "thresholds": {
+        "rate<0.05": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_tls_handshaking": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "max": 0,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0
+      }
+    },
+    "http_req_receiving": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.3548958333333331,
+        "min": 0.084,
+        "med": 0.2195,
+        "max": 26.253,
+        "p(90)": 0.5301,
+        "p(95)": 0.7078999999999995
+      }
+    },
+    "business_list_latency": {
+      "type": "trend",
+      "contains": "default",
+      "values": {
+        "max": 65.592,
+        "p(90)": 60.1165,
+        "p(95)": 62.698499999999996,
+        "avg": 52.48312500000001,
+        "min": 33.522,
+        "med": 52.9825
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 960,
+        "fails": 0
+      }
+    },
+    "http_reqs": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 480,
+        "rate": 3.869861055299339
+      }
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 1.932,
+        "p(90)": 0.062,
+        "p(95)": 0.07914999999999994,
+        "avg": 0.04459166666666662,
+        "min": 0.01,
+        "med": 0.031
+      }
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 432553,
+        "rate": 3487.333352193531
+      }
+    },
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 8944.78685425,
+        "avg": 8857.862172000001,
+        "min": 8763.085917,
+        "med": 8849.7783965,
+        "max": 8959.019542,
+        "p(90)": 8926.5195625
+      }
+    },
+    "group_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 170.41375203749996,
+        "min": 34.053833,
+        "med": 110.0025415,
+        "max": 586.175666,
+        "p(90)": 489.0863791,
+        "p(95)": 507.1040190499999
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 157.399,
+        "p(90)": 52.0428,
+        "p(95)": 63.48179999999999,
+        "avg": 27.772862499999995,
+        "min": 8.552,
+        "med": 18.332
+      }
+    },
+    "temp_save_success_rate": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 16,
+        "fails": 0
+      }
+    },
+    "iterations": {
+      "values": {
+        "count": 16,
+        "rate": 0.12899536850997798
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "total_flow_success_rate": {
+      "thresholds": {
+        "rate>0.90": {
+          "ok": true
+        }
+      },
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 1,
+        "passes": 16,
+        "fails": 0
+      }
+    }
+  }
+}
